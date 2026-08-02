@@ -33,7 +33,7 @@ Thickness IS NULL
 or 
 Size IS NULL;
 
--- 3. Deal with price that include currency
+-- 4. Deal with price that include currency
 -- FIRST DELETE CURRENCY, SPACES
 update sales
 SET 
