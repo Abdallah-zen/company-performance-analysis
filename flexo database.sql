@@ -43,6 +43,11 @@ SET
 `Total Cost` = REPLACE(REPLACE(REPLACE(`Total cost`, 'EGP', ''), ',', ''), ' ', ''),
 `Cost per Box` = REPLACE(REPLACE(REPLACE(`Cost per Box`, 'EGP', ''), ',', ''), ' ', '');
 
+-- we made mistake in updating total cost by replacing total cost value with total values
+-- so we calculate the total cost again by multipling qty/ box* cost per box
+update sales
+set `Total Cost` = `Cost per Box`* `QTY/Box`;
+
 ALTER TABLE sales 
 MODIFY COLUMN `Value Without Vat` DECIMAL(10,2),
 MODIFY COLUMN `Vat 14%` DECIMAL(10,2),
@@ -87,4 +92,47 @@ group by `Sales Rep`
 order by com_value desc;
 -- the biggest commission value is 20050 for Islam fawzy
 
+-- collecting the open invoices
+select `Collection Status`, `Customer Name`,
+sum(`Collection Value`) as `collected value`
+from collection
+where `Collection Status` = 'Collected'
+group by `Customer Name`, `Collection Status` 
+order by `collected value` desc
+limit 10;
+
+-- linking between sales and collection table
+select
+s.`Invoice No.`,
+s. `Customer Name`,
+s. Brand,
+s. `Item Name`,
+s. `Total Value`as `sales value`,
+s. Margin,
+s. `Shipment Lead Time`,
+c. `Collection Type`,
+c. `Agreed Collection Date`,
+c. `Actual Collection Date`,
+c. `Collection Delay`,
+c. `Collection Status`,
+c. `Sales Rep`,
+c. `Sales Commission Value`
+from sales s
+left join collection c on s.`Invoice No.` = c.`Invoice No`;
+
+-- linking stock lead time with collection delay for each brand
+select 
+s. Brand,
+s. Thickness,
+s. `Customer Name`,
+-- to get avg of shipment lead time
+avg(s. `Shipment Lead Time`) as avg_days_stock,
+-- to get avg of collection delay
+avg(c. `Collection Delay`) as avg_collection_delay,
+-- getting total sales value
+sum(s. `Value Without Vat`) as total_value
+from sales s
+left join collection c on s.`Invoice No.` = c.`Invoice No`
+group by s. brand, s. `Customer Name`, s. Thickness
+order by avg_collection_delay desc, avg_days_stock desc;
 
