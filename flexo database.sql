@@ -43,11 +43,6 @@ SET
 `Total Cost` = REPLACE(REPLACE(REPLACE(`Total cost`, 'EGP', ''), ',', ''), ' ', ''),
 `Cost per Box` = REPLACE(REPLACE(REPLACE(`Cost per Box`, 'EGP', ''), ',', ''), ' ', '');
 
--- we made mistake in updating total cost by replacing total cost value with total values
--- so we calculate the total cost again by multipling qty/ box* cost per box
-update sales
-set `Total Cost` = `Cost per Box`* `QTY/Box`;
-
 ALTER TABLE sales 
 MODIFY COLUMN `Value Without Vat` DECIMAL(10,2),
 MODIFY COLUMN `Vat 14%` DECIMAL(10,2),
