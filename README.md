@@ -1,4 +1,4 @@
-# company-performance-analysis
+# SQL Importing Exporting company analysis
 an analysis for analyzing company performance by analyzing sales and collection timeline 
 the project aim to get the following KPIs:
 1- important measures:
